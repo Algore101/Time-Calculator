@@ -25,6 +25,9 @@ class TimeCalculator(tk.Tk):
         # Bind keyboard shortcuts
         self.bind('<Key>', self.key_pressed)
 
+        # Bind mouse 1 click
+        self.bind('<ButtonRelease-1>', self.mouse_clicked)
+
         # Containers
         self.entry_frame = None
         self.buttons_frame = None
@@ -215,9 +218,6 @@ class TimeCalculator(tk.Tk):
         self.current_focus.icursor(len(self.current_text.get()))
 
     def operator(self, operator: str) -> None:
-        # Set focus field (used when tab is pressed or mouse is clicked on different entry field)
-        # self.shift_focus(self.focus_get(), self.focus_get().cget("textvariable"))
-
         # Get simplified time
         time = timeCalc.simplify_time(int(self.hour_text.get()),
                                       int(self.minute_text.get()),
@@ -302,6 +302,11 @@ class TimeCalculator(tk.Tk):
         self.sum_label.config(text=new_text)
 
     def key_pressed(self, event) -> None:
+        # Clear any selected text from all fields
+        self.hour_entry.selection_clear()
+        self.minute_entry.selection_clear()
+        self.second_entry.selection_clear()
+
         # Get value of key pressed
         key_value = event.char
         # Get current text with key value added
@@ -354,8 +359,21 @@ class TimeCalculator(tk.Tk):
                 self.clear(True)
 
     def mouse_clicked(self, event) -> None:
-        # TODO: Allow mouse input to shift input focus
-        pass
+        # Clear any selected text from all fields
+        self.hour_entry.selection_clear()
+        self.minute_entry.selection_clear()
+        self.second_entry.selection_clear()
+
+        # Shift focus to new field
+        if self.focus_get() == self.hour_entry:
+            self.current_focus = self.hour_entry
+            self.current_text = self.hour_text
+        elif self.focus_get() == self.minute_entry:
+            self.current_focus = self.minute_entry
+            self.current_text = self.minute_text
+        elif self.focus_get() == self.second_entry:
+            self.current_focus = self.second_entry
+            self.current_text = self.second_text
 
 
 if __name__ == '__main__':
