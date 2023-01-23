@@ -67,10 +67,10 @@ class TimeCalculator(tk.Tk):
 
     def create_gui(self) -> None:
         # Set style
-        # style = tk.ttk.Style()
-        # self.tk.call("lappend", "auto_path", "breeze-dark")
-        # self.tk.call("package", "require", "ttk::theme::breeze-dark")
-        # style.theme_use("breeze-dark")
+        style = tk.ttk.Style()
+        self.tk.call("lappend", "auto_path", "breeze-dark")
+        self.tk.call("package", "require", "ttk::theme::breeze-dark")
+        style.theme_use("breeze-dark")
 
         # Containers
         self.entry_frame = tk.Frame(self, padx=10, pady=10)
