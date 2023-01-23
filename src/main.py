@@ -1,3 +1,11 @@
+"""
+A time calculator
+
+Created by Jaydon Walters
+TODO: Set minimum frame size
+TODO: Allow for resizability
+"""
+
 import tkinter as tk
 from tkinter import ttk
 import timeCalc
@@ -204,7 +212,6 @@ class TimeCalculator(tk.Tk):
                 self.second_text.set("0")
 
         # Shift caret to end of entry
-        print(self.current_text.get())
         self.current_focus.icursor(len(self.current_text.get()))
 
     def operator(self, operator: str) -> None:
@@ -240,7 +247,7 @@ class TimeCalculator(tk.Tk):
         # Update last operator
         self.last_operator = operator
 
-    def clear(self, event, clear_everything: bool = False) -> None:
+    def clear(self, clear_everything: bool = False) -> None:
         # Clear entry fields
         self.hour_text.set("0")
         self.minute_text.set("0")
@@ -310,71 +317,59 @@ class TimeCalculator(tk.Tk):
         self.sum_label.config(text=new_text)
 
     def key_pressed(self, event) -> None:
-        print(type(self))
-        # Get key pressed
-        char = event.char
-        print(event)
-        # Get text of current focused field
-        text = self.current_text.get()
+        # Get value of key pressed
+        key_value = event.char
+        # Get current text with key value added
+        field_text = self.current_text.get()
 
-        # Check for digits
-        if char.isdigit() and text.isdigit():
-            # Remove 0 in front of number
-            self.current_text.set(int(text))
+        # Check if character is a digit
+        if key_value.isdigit():
+            # Allow digit input
+            # Convert text to integer (removes leading 0)
+            self.current_text.set(int(field_text))
+        else:
+            # Remove non-digit input
+            field_text = field_text.replace(key_value, "")
+            self.current_text.set(field_text)
 
-        # Check for backspace
-        elif char == "\x08":
-            # Replace blank text with a 0
-            if text == "":
-                self.current_text.set("0")
-                # Shift caret to end of entry
-                self.current_focus.icursor(len(self.current_text.get()))
+            # Check for keyboard shortcuts
+            if key_value == "\x08":
+                # BACKSPACE → Replace empty field with 0
+                if field_text == "":
+                    self.current_text.set("0")
+                    # Shift caret to end of field
+                    self.current_focus.icursor(len(self.current_text.get()))
 
-        # Check for shift shortcuts
-        elif char == ":" or char == ".":
-            # Remove characters from entry field
-            text = text.replace(char, "")
-            self.current_text.set(text)
-            # Shift values
-            self.shift_focus()
+            elif key_value == "\r" or key_value == "=":
+                # ENTER = → Run equate function
+                self.equate()
 
-        # Check for equal shortcuts
-        elif char == "\r":
-            self.equate()
+            elif key_value == "+" or key_value == "-" or key_value == "*" or key_value == "/":
+                # + - * / → Run operator function
+                self.operator(key_value)
 
-        # Check for operator shortcuts
-        elif char == "+" or char == "-" or char == "*" or char == "/":
-            # Remove characters from entry field
-            text = text.replace(char, "")
-            self.current_text.set(text)
-            # Perform operator function
-            self.operator(char)
+            elif key_value == "\t":
+                # TAB → Shift input focus to new field
+                if self.focus_get() == self.hour_entry:
+                    self.current_focus = self.minute_entry
+                    self.current_text = self.minute_text
+                elif self.focus_get() == self.minute_entry:
+                    self.current_focus = self.second_entry
+                    self.current_text = self.second_text
+                elif self.focus_get() == self.second_entry:
+                    self.current_focus = self.hour_entry
+                    self.current_text = self.hour_text
 
-        # Check for equate shortcuts
-        elif char == "=":
-            # Remove characters from entry field
-            text = text.replace(char, "")
-            self.current_text.set(text)
-            # Perform equate function
-            self.equate()
+            elif key_value == ":" or key_value == ".":
+                # : . → Shift values to the left and clear current field
+                self.shift_focus()
 
-        # Check for shift focus
-        elif char == "\t":
-            # Focus on next widget
-            if self.focus_get() == self.hour_entry:
-                self.current_focus = self.minute_entry
-                self.current_text = self.minute_text
-            elif self.focus_get() == self.minute_entry:
-                self.current_focus = self.second_entry
-                self.current_text = self.second_text
-            elif self.focus_get() == self.second_entry:
-                self.current_focus = self.hour_entry
-                self.current_text = self.hour_text
-            # Shift caret to end of entry
-            self.current_focus.selection_clear()
-            self.current_focus.icursor(len(str(self.current_text.get())))
+            elif key_value == "\x1b":
+                # ESC → Clear all
+                self.clear(True)
 
     def mouse_clicked(self, event) -> None:
+        # TODO: Allow mouse input to shift input focus
         pass
 
 
