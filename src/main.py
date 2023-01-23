@@ -263,21 +263,6 @@ class TimeCalculator(tk.Tk):
         # Reset focus to second entry field
         self.shift_focus(self.second_entry, self.second_text)
 
-    def clear_all(self, *args) -> None:
-        # Clear entry fields
-        self.hour_text.set("0")
-        self.minute_text.set("0")
-        self.second_text.set("0")
-
-        # Clear label
-        self.sum_label.config(text="")
-
-        # Clear values (optional)
-        self.values.clear()
-
-        # Reset focus to second entry field
-        self.shift_focus(self.second_entry, self.second_text)
-
     def calculate_values(self) -> list:
         # Perform calculation
         total_seconds = 0
